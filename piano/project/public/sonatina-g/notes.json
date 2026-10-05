@@ -1,6 +1,10 @@
 {
  "composer": "Ludwig van Beethoven",
  "title": "Sonatina in G",
+ "keyboard": [
+  36,
+  96
+ ],
  "duration": 172.79,
  "sections": [
   {
@@ -5781,9 +5785,5 @@
    "hand": "L",
    "vel": 77
   }
- ],
- "keyboard": [
-  36,
-  96
  ]
 }

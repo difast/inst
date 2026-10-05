@@ -85,7 +85,7 @@ def rng(d, a, b):
     return [d[i] for i in range(a, b + 1)]
 
 
-if __name__ == "__main__":
+def full():
     s = Score(key_sharps="F")
     s.section("I. Moderato")
     s.bars(rng(M1, 1, 8), MODERATO, vel=(58, 46), seed=1)
@@ -99,7 +99,22 @@ if __name__ == "__main__":
     s.bars(rng(M2, 24, 31), ROMANZE, vel=(56, 44), seed=8)
     s.bars(rng(M2, 32, 41), ROMANZE, vel=(62, 48), seed=9)
     s.bars(rng(M2, 42, 43), ROMANZE, vel=(80, 66), seed=10)
-    out = os.path.join(os.path.dirname(__file__), "..", "public", "sonatina-g")
-    d = s.write(out, {"composer": "Ludwig van Beethoven", "title": "Sonatina in G", "keyboard": [36, 96]})
-    lo = min(n["midi"] for n in d["notes"]); hi = max(n["midi"] for n in d["notes"])
-    print(f"{len(d['notes'])} notes, {d['duration']}s, range {lo}-{hi}")
+    return s
+
+
+def short():
+    """~45 s cut for Reels: the opening theme, then straight into the climax and the ending."""
+    s = Score(key_sharps="F")
+    s.section("I. Moderato")
+    s.bars(rng(M1, 1, 8), MODERATO, vel=(60, 48), seed=1)
+    s.bars(rng(M1, 25, 31), MODERATO, vel=(76, 60), seed=4)
+    s.bars(rng(M1, 32, 34), MODERATO, vel=(88, 72), seed=5)
+    return s
+
+
+if __name__ == "__main__":
+    meta = {"composer": "Ludwig van Beethoven", "title": "Sonatina in G", "keyboard": [36, 96]}
+    for name, build in (("sonatina-g", full), ("sonatina-g-short", short)):
+        out = os.path.join(os.path.dirname(__file__), "..", "public", name)
+        d = build().write(out, meta)
+        print(f"{name}: {len(d['notes'])} notes, {d['duration']}s")
