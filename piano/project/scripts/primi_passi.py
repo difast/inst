@@ -1,4 +1,4 @@
-"""Primi Passi (Fabrizio Paterlini), bars 1-16, transcribed from the sheet music.
+"""Primi Passi (Fabrizio Paterlini), bars 1-8 + 17-24, transcribed from the sheet music.
 
 Writes public/notes.json (for the video) and public/primi-passi.mid.
 Positions and lengths are in eighth notes; each 4/4 bar has 8 eighths.
@@ -26,17 +26,23 @@ RH_A = ["C5", "D5", "B4", "G5", "F5"]  # C# D B G F#
 RH_B = ["D5", "E5", "C5", "G5", "F5"]  # D E C# G F#
 RH_C = ["D5", "E5", "A4", "G5", "F5"]  # D E A G F#
 RH_END = "half"  # C# then D held as a half note
+RH_UP = ["D5", "D5", "B5", "A5", "A5"]  # D D B A A
+RH_EF = ["E5", "E5", "F5", "G5", "G5"]  # E E F# G G
 
 LH_Bm = ["B3", "F4", "B4"]
 LH_D = ["D4", "A4", "C5"]
 LH_A = ["A3", "E4", "B4"]
+LH_G = ["G3", "D4", "B4"]
+LH_A2 = ["A3", "E4", "C5"]
 
 BARS = [
     (RH_A, LH_Bm), (RH_A, LH_Bm), (RH_B, LH_D), (RH_B, LH_D),
     (RH_A, LH_A), (RH_A, LH_A), (RH_A, LH_Bm), (RH_END, LH_Bm),
-    (RH_A, LH_Bm), (RH_A, LH_Bm), (RH_C, LH_D), (RH_C, LH_D),
-    (RH_A, LH_A), (RH_A, LH_A), (RH_A, LH_Bm), (RH_END, LH_Bm),
+    # bars 17-24
+    (RH_UP, LH_G), (RH_EF, LH_A2), (RH_A, LH_Bm), (RH_A, LH_Bm),
+    (RH_UP, LH_G), (RH_EF, LH_A2), (RH_A, LH_Bm), (RH_A, LH_Bm),
 ]
+GRACE_BARS = {8}  # bar 17 (index 8 here) has a grace B5 before the last A5
 
 
 def build():
@@ -66,6 +72,8 @@ def build():
             vels = [70, 80, 66, 82, 72]
             for i, n in enumerate(rh):
                 add(b, 3 + i, 1, n, "R", vels[i])
+            if b in GRACE_BARS:
+                add(b, 7 - 0.3, 0.3, "B5", "R", 60)
     return notes, bar_len
 
 
