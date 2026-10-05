@@ -1,5 +1,6 @@
 import {AbsoluteFill, Audio, interpolate, random, staticFile, useCurrentFrame, useVideoConfig} from 'remotion';
 import {layout} from './keyboard';
+import {Banner} from './Banner';
 
 type Note = {midi: number; start: number; dur: number; hand: string; vel: number};
 
@@ -166,6 +167,8 @@ export const Visualizer: React.FC<{notes: Note[]; composer: string; title: strin
             />
           );
         })}
+
+      <Banner top={KB_TOP + WHITE_H + 50} name="Piano Lab" site="piano-lab.ru" />
 
       {/* title */}
       <div
