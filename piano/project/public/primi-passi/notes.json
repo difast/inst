@@ -2,6 +2,10 @@
  "composer": "Fabrizio Paterlini",
  "title": "Primi Passi",
  "duration": 30,
+ "keyboard": [
+  48,
+  96
+ ],
  "sections": [],
  "notes": [
   {
@@ -1012,9 +1016,5 @@
    "hand": "R",
    "vel": 72
   }
- ],
- "keyboard": [
-  48,
-  96
  ]
 }

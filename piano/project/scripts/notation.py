@@ -28,12 +28,10 @@ def to_midi(name, key):
         acc += rest[0]
         rest = rest[1:]
     n = 12 * (int(rest) + 1) + STEPS[letter]
-    if acc == "#":
-        return n + 1
-    if acc == "b":
-        return n - 1
     if acc == "n":
         return n
+    if acc:
+        return n + acc.count("#") - acc.count("b")
     return n + key.get(letter, 0)
 
 
@@ -78,10 +76,12 @@ class Score:
         for bar in bars:
             first = len(self.notes)
             length = 0.0
+            # the bar lasts as long as the right hand's first voice; other voices may hold
+            # notes across the barline (ties)
+            length = parse_voice(bar[0].split(" | ")[0])[1]
             for hand, text, base in (("R", bar[0], vel[0]), ("L", bar[1], vel[1])):
                 for voice in text.split(" | "):
                     events, total = parse_voice(voice)
-                    length = max(length, total)
                     for off, dur, pitches, kind in events:
                         start = self.t + off * q
                         accent = 6 if abs(off % 1) < 1e-6 and off == 0 else 0
