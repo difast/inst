@@ -4,9 +4,10 @@ import {Banner} from './Banner';
 
 type Note = {midi: number; start: number; dur: number; hand: string; vel: number};
 
-const KB_TOP = 1380;
-const WHITE_H = 250;
-const BLACK_H = 158;
+// keyboard and banner sit above the Reels caption/UI zone (bottom ~400px)
+const KB_TOP = 1120;
+const WHITE_H = 230;
+const BLACK_H = 146;
 const SPEED = 430; // px per second
 const COLORS: Record<string, [string, string]> = {
   R: ['#7fdcff', '#1f9bff'],
@@ -38,8 +39,8 @@ export const Visualizer: React.FC<{notes: Note[]; composer: string; title: strin
 
       <AbsoluteFill
         style={{
-          maskImage: 'linear-gradient(transparent 0px, transparent 390px, #000 600px)',
-          WebkitMaskImage: 'linear-gradient(transparent 0px, transparent 390px, #000 600px)',
+          maskImage: 'linear-gradient(transparent 0px, transparent 370px, #000 540px)',
+          WebkitMaskImage: 'linear-gradient(transparent 0px, transparent 370px, #000 540px)',
         }}
       >
       {/* octave guide lines */}
@@ -168,7 +169,7 @@ export const Visualizer: React.FC<{notes: Note[]; composer: string; title: strin
           );
         })}
 
-      <Banner top={KB_TOP + WHITE_H + 50} name="Piano Lab" site="piano-lab.ru" />
+      <Banner top={KB_TOP + WHITE_H + 36} name="Piano Lab" site="piano-lab.ru" />
 
       {/* title */}
       <div
