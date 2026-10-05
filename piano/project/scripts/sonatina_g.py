@@ -1,6 +1,6 @@
 """Sonatina in G major (L. van Beethoven, Anh. 5 No. 1), transcribed from the rowy.net edition.
 
-Repeats are not played so the whole piece fits in a 3-minute Reel.
+Both movements are transcribed below; the video is a ~45 s cut of the Moderato.
 """
 import os
 
@@ -85,23 +85,6 @@ def rng(d, a, b):
     return [d[i] for i in range(a, b + 1)]
 
 
-def full():
-    s = Score(key_sharps="F")
-    s.section("I. Moderato")
-    s.bars(rng(M1, 1, 8), MODERATO, vel=(58, 46), seed=1)
-    s.bars(rng(M1, 9, 16), MODERATO, vel=(70, 56), seed=2)
-    s.bars(rng(M1, 17, 24), MODERATO, vel=(56, 44), seed=3)
-    s.bars(rng(M1, 25, 31), MODERATO, vel=(72, 58), seed=4)
-    s.bars(rng(M1, 32, 34), MODERATO, vel=(84, 70), seed=5)
-    s.section("II. Romanze", gap=2.2)
-    s.bars(rng(M2, 1, 9), ROMANZE, vel=(58, 44), seed=6)
-    s.bars(rng(M2, 10, 23), ROMANZE, vel=(62, 48), seed=7)
-    s.bars(rng(M2, 24, 31), ROMANZE, vel=(56, 44), seed=8)
-    s.bars(rng(M2, 32, 41), ROMANZE, vel=(62, 48), seed=9)
-    s.bars(rng(M2, 42, 43), ROMANZE, vel=(80, 66), seed=10)
-    return s
-
-
 def short():
     """~45 s cut for Reels: the opening theme, then straight into the climax and the ending."""
     s = Score(key_sharps="F")
@@ -114,7 +97,7 @@ def short():
 
 if __name__ == "__main__":
     meta = {"composer": "Ludwig van Beethoven", "title": "Sonatina in G", "keyboard": [36, 96]}
-    for name, build in (("sonatina-g", full), ("sonatina-g-short", short)):
+    for name, build in (("sonatina-g-short", short),):
         out = os.path.join(os.path.dirname(__file__), "..", "public", name)
         d = build().write(out, meta)
         print(f"{name}: {len(d['notes'])} notes, {d['duration']}s")
