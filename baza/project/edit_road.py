@@ -25,6 +25,7 @@ SHOTS = [
 FADES = [0.8, 0.8, 0.7, 0.9]  # dissolve between shot i and i+1
 LINES = ["Лучшие дороги ведут туда,", "где ты ещё не был"]
 TEXT_IN = 2.6  # seconds into the last shot (after the slow-down starts)
+WATERMARK = "P"  # bottom-right, just above the letterbox bar
 
 
 def shot_len(parts):
@@ -73,6 +74,8 @@ def main():
         f"{cur_v}noise=c0s=5:c0f=t+u,"
         f"drawbox=x=0:y=0:w={W}:h={BAR}:color=black:t=fill,"
         f"drawbox=x=0:y={H - BAR}:w={W}:h={BAR}:color=black:t=fill,"
+        f"drawtext=fontfile='{FONT}':text='{WATERMARK}':fontsize=46:fontcolor=white@0.65:"
+        f"x=w-text_w-36:y={H - BAR}-text_h-26:shadowcolor=black@0.35:shadowx=0:shadowy=1,"
         + ",".join(text) +
         f",fade=t=in:d=0.6,fade=t=out:st={total - 1.0:.2f}:d=1.0[vout]")
     f.append(f"{cur_a}loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.4,"
