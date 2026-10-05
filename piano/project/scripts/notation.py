@@ -20,7 +20,8 @@ GRACE = 0.07  # seconds
 ARPEGGIO = 0.035  # seconds between arpeggiated notes
 
 
-def to_midi(name, key_sharps):
+def to_midi(name, key):
+    """key maps a letter to its key-signature shift, e.g. {"F": 1} or {"B": -1, "E": -1}."""
     letter, rest = name[0], name[1:]
     acc = ""
     while rest and rest[0] in "#bn":
@@ -33,7 +34,7 @@ def to_midi(name, key_sharps):
         return n - 1
     if acc == "n":
         return n
-    return n + 1 if letter in key_sharps else n
+    return n + key.get(letter, 0)
 
 
 def parse_voice(text):
@@ -59,8 +60,8 @@ def parse_voice(text):
 
 
 class Score:
-    def __init__(self, key_sharps=()):
-        self.key = set(key_sharps)
+    def __init__(self, key_sharps="", key_flats=""):
+        self.key = {**{c: 1 for c in key_sharps}, **{c: -1 for c in key_flats}}
         self.notes = []
         self.sections = []
         self.t = 0.0
