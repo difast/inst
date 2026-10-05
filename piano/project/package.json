@@ -2,10 +2,9 @@
   "name": "piano-visualizer",
   "private": true,
   "scripts": {
-    "notes": "python3 scripts/primi_passi.py",
-    "audio": "python3 scripts/synth.py 30",
+    "audio": "python3 scripts/synth.py",
     "studio": "remotion studio",
-    "render": "remotion render PrimiPassi ../final/primi-passi.mp4"
+    "render": "remotion render"
   },
   "dependencies": {
     "@remotion/cli": "4.0.533",

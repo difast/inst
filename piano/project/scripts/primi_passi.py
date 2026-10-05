@@ -6,7 +6,7 @@ Positions and lengths are in eighth notes; each 4/4 bar has 8 eighths.
 import json
 import os
 
-import mido
+from notation import write_midi
 
 TEMPO_BPM = 132
 START_OFFSET = 0.5  # seconds of silence before the first note
@@ -77,30 +77,14 @@ def build():
     return notes, bar_len
 
 
-def write_midi(notes, path):
-    mf = mido.MidiFile(ticks_per_beat=480)
-    tr = mido.MidiTrack()
-    mf.tracks.append(tr)
-    tr.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(TEMPO_BPM)))
-    tps = 480 * TEMPO_BPM / 60
-    ev = []
-    for n in notes:
-        ev.append((n["start"], 1, n["midi"], n["vel"]))
-        ev.append((n["start"] + n["dur"], 0, n["midi"], 0))
-    ev.sort(key=lambda e: (e[0], e[1]))
-    last = 0
-    for t, on, m, v in ev:
-        tick = round(t * tps)
-        tr.append(mido.Message("note_on" if on else "note_off", note=m, velocity=v, time=tick - last))
-        last = tick
-    mf.save(path)
-
-
 if __name__ == "__main__":
-    root = os.path.join(os.path.dirname(__file__), "..", "public")
+    out = os.path.join(os.path.dirname(__file__), "..", "public", "primi-passi")
+    os.makedirs(out, exist_ok=True)
     notes, bar_len = build()
-    with open(os.path.join(root, "notes.json"), "w") as f:
-        json.dump({"tempo": TEMPO_BPM, "barLength": bar_len, "notes": notes}, f, indent=1)
-    write_midi(notes, os.path.join(root, "primi-passi.mid"))
+    data = {"composer": "Fabrizio Paterlini", "title": "Primi Passi", "duration": 30, "keyboard": [48, 96],
+            "sections": [], "notes": notes}
+    with open(os.path.join(out, "notes.json"), "w") as f:
+        json.dump(data, f, indent=1)
+    write_midi(notes, os.path.join(out, "notes.mid"))
     end = max(n["release"] for n in notes)
     print(f"{len(notes)} notes, music ends at {end:.2f}s")

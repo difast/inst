@@ -1,4 +1,4 @@
-"""Render public/notes.json to public/audio.wav with Salamander Grand Piano samples.
+"""Render public/<song>/notes.json to public/<song>/audio.wav with Salamander Grand Piano samples.
 
 Samples (CC-BY 3.0, Alexander Holm) are fetched from github.com/Tonejs/audio
 into scripts/.samples on first run.
@@ -41,9 +41,10 @@ def load(name):
     return np.frombuffer(raw, dtype=np.float32).reshape(-1, 2)
 
 
-def main(total_seconds):
-    root = os.path.join(HERE, "..", "public")
-    notes = json.load(open(os.path.join(root, "notes.json")))["notes"]
+def main(song):
+    root = os.path.join(HERE, "..", "public", song)
+    data = json.load(open(os.path.join(root, "notes.json")))
+    notes, total_seconds = data["notes"], data["duration"]
     samples = sample_list()
     cache = {}
     out = np.zeros((int(total_seconds * SR) + SR, 2), dtype=np.float32)
@@ -80,4 +81,4 @@ def main(total_seconds):
 
 
 if __name__ == "__main__":
-    main(float(sys.argv[1]) if len(sys.argv) > 1 else 30)
+    main(sys.argv[1])

@@ -1,20 +1,27 @@
 import {Composition} from 'remotion';
-import {Visualizer} from './Visualizer';
-import song from '../public/notes.json';
+import {Song, Visualizer} from './Visualizer';
+import primiPassi from '../public/primi-passi/notes.json';
+import sonatinaG from '../public/sonatina-g/notes.json';
+
+const FPS = 30;
+const SONGS: {id: string; dir: string; song: Song}[] = [
+  {id: 'PrimiPassi', dir: 'primi-passi', song: primiPassi as Song},
+  {id: 'SonatinaG', dir: 'sonatina-g', song: sonatinaG as Song},
+];
 
 export const Root: React.FC = () => (
-  <Composition
-    id="PrimiPassi"
-    component={Visualizer}
-    durationInFrames={30 * 30}
-    fps={30}
-    width={1080}
-    height={1920}
-    defaultProps={{
-      notes: song.notes,
-      composer: 'Fabrizio Paterlini',
-      title: 'Primi Passi',
-      audio: 'audio.wav',
-    }}
-  />
+  <>
+    {SONGS.map(({id, dir, song}) => (
+      <Composition
+        key={id}
+        id={id}
+        component={Visualizer}
+        durationInFrames={Math.ceil(song.duration * FPS)}
+        fps={FPS}
+        width={1080}
+        height={1920}
+        defaultProps={{song, audio: `${dir}/audio.wav`}}
+      />
+    ))}
+  </>
 );

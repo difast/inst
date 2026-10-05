@@ -4,6 +4,15 @@ import {Banner} from './Banner';
 
 type Note = {midi: number; start: number; dur: number; hand: string; vel: number};
 
+export type Song = {
+  composer: string;
+  title: string;
+  duration: number;
+  keyboard: number[];
+  sections: {start: number; label: string}[];
+  notes: Note[];
+};
+
 // keyboard and banner sit above the Reels caption/UI zone (bottom ~400px)
 const KB_TOP = 1120;
 const WHITE_H = 230;
@@ -14,16 +23,16 @@ const COLORS: Record<string, [string, string]> = {
   L: ['#6f8dff', '#3048ff'],
 };
 
-export const Visualizer: React.FC<{notes: Note[]; composer: string; title: string; audio: string}> = ({
-  notes,
-  composer,
-  title,
-  audio,
-}) => {
+export const Visualizer: React.FC<{song: Song; audio: string}> = ({song, audio}) => {
+  const {notes, composer, title, sections, keyboard} = song;
   const frame = useCurrentFrame();
   const {fps, width, durationInFrames} = useVideoConfig();
   const t = frame / fps;
-  const keys = layout(width);
+  const keys = layout(width, keyboard[0], keyboard[1]);
+  const section = [...sections].reverse().find((sec) => t >= sec.start - 0.5);
+  const sectionOpacity = section
+    ? interpolate(t, [section.start - 0.5, section.start + 0.3], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})
+    : 0;
   const byMidi = new Map(keys.map((k) => [k.midi, k]));
   const active = new Map<number, string>();
   for (const n of notes) if (t >= n.start && t < n.start + n.dur) active.set(n.midi, n.hand);
@@ -186,6 +195,11 @@ export const Visualizer: React.FC<{notes: Note[]; composer: string; title: strin
       >
         <div style={{fontSize: 40, letterSpacing: 6, color: '#9fd8ff', textTransform: 'uppercase'}}>{composer}</div>
         <div style={{fontSize: 92, fontWeight: 300, marginTop: 6}}>{title}</div>
+        {section ? (
+          <div style={{fontSize: 38, marginTop: 4, color: '#cfe9ff', opacity: sectionOpacity, fontStyle: 'italic'}}>
+            {section.label}
+          </div>
+        ) : null}
       </div>
     </AbsoluteFill>
   );
