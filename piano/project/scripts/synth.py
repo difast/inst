@@ -16,7 +16,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CACHE = os.path.join(HERE, ".samples")
 URL = "https://raw.githubusercontent.com/Tonejs/audio/master/salamander/{}.mp3"
 SAMPLE_NOTES = {"A": 9, "C": 0, "Ds": 3, "Fs": 6}
-RELEASE = 0.45
+RELEASE = 0.9  # natural decay after the key/pedal is released
+RESTRIKE = 0.06  # a repeated note damps the previous one on the same string
 
 
 def sample_list():
@@ -48,6 +49,11 @@ def main(song):
     samples = sample_list()
     cache = {}
     out = np.zeros((int(total_seconds * SR) + SR, 2), dtype=np.float32)
+    # when the same key is struck again, the earlier note stops quickly
+    next_strike = {}
+    for n in sorted(notes, key=lambda n: -n["start"]):
+        n["_cut"] = next_strike.get(n["midi"])
+        next_strike[n["midi"]] = n["start"]
     for n in notes:
         base = min(samples, key=lambda m: abs(m - n["midi"]))
         if base not in cache:
@@ -63,6 +69,10 @@ def main(song):
         h = int(hold * SR)
         if h < len(wav):
             env[h:] = np.exp(-np.arange(len(wav) - h) / (RELEASE * SR / 5))
+        if n["_cut"] is not None:
+            c = int((n["_cut"] - n["start"]) * SR)
+            if 0 < c < len(wav):
+                env[c:] *= np.exp(-np.arange(len(wav) - c) / (RESTRIKE * SR / 5))
         gain = (n["vel"] / 127) ** 1.7
         s = int(n["start"] * SR)
         seg = out[s:s + len(wav)]

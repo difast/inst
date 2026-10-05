@@ -1,6 +1,6 @@
 """Requiem for a Dream (Clint Mansell), piano arrangement by Dustin Nagel.
 
-Played in full with all repeats: 1, |:2-3:|, |:4-7:|, |:8-21:|, 22-26.
+All 26 bars are transcribed below; the video is a ~45 s cut (bars 8-21 + 26) with sustain pedal.
 """
 import os
 
@@ -73,38 +73,20 @@ def bars(*nums):
     return [B[n] for n in nums]
 
 
-def full():
-    s = Score(key_flats="BE")
-    s.bars(bars(1), TEMPO, vel=(40, 44), seed=1)
-    for i in range(2):
-        s.bars(bars(2, 3), TEMPO, vel=(60, 60), seed=2 + i)
-    for i in range(2):
-        s.bars(bars(4, 5, 6, 7), TEMPO, vel=(66, 56), seed=4 + i)
-    for i in range(2):
-        s.bars(bars(8, 9, 10, 11), TEMPO, vel=(72, 60), seed=6 + i)
-        s.bars(bars(12, 13, 14, 15), TEMPO, vel=(82, 70), seed=8 + i)
-        s.bars(bars(16, 17, 18, 19), TEMPO, vel=(94, 82), seed=10 + i)
-        s.bars(bars(20, 21), TEMPO, vel=(106, 94), seed=12 + i)
-    # rallentando to the end
-    for n, bpm, v in ((22, 84, (66, 56)), (23, 80, (62, 52)), (24, 76, (54, 46)), (25, 72, (50, 42)), (26, 64, (40, 36))):
-        s.bars(bars(n), bpm, vel=v, seed=20 + n)
-    return s
-
-
 def short():
     """~45 s cut for Reels: theme with chords, the build-up and the fff climax, then the final G."""
     s = Score(key_flats="BE")
-    s.bars(bars(8, 9, 10, 11), TEMPO, vel=(70, 60), seed=6)
-    s.bars(bars(12, 13, 14, 15), TEMPO, vel=(82, 70), seed=8)
-    s.bars(bars(16, 17, 18, 19), TEMPO, vel=(94, 82), seed=10)
-    s.bars(bars(20, 21), TEMPO, vel=(106, 94), seed=12)
-    s.bars(bars(26), 64, vel=(56, 52), seed=46)
+    s.bars(bars(8, 9, 10, 11), TEMPO, vel=(70, 60), seed=6, pedal=2)
+    s.bars(bars(12, 13, 14, 15), TEMPO, vel=(82, 70), seed=8, pedal=2)
+    s.bars(bars(16, 17, 18, 19), TEMPO, vel=(94, 82), seed=10, pedal=2)
+    s.bars(bars(20, 21), TEMPO, vel=(106, 94), seed=12, pedal=2)
+    s.bars(bars(26), 64, vel=(56, 52), seed=46, pedal=5)
     return s
 
 
 if __name__ == "__main__":
     meta = {"composer": "Clint Mansell", "title": "Requiem for a Dream", "keyboard": [24, 84]}
-    for name, build in (("requiem", full), ("requiem-short", short)):
+    for name, build in (("requiem-short", short),):
         out = os.path.join(os.path.dirname(__file__), "..", "public", name)
         d = build().write(out, meta)
         print(f"{name}: {len(d['notes'])} notes, {d['duration']}s")

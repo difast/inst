@@ -70,10 +70,13 @@ class Score:
         self.t += gap
         self.sections.append({"start": round(self.t, 3), "label": label})
 
-    def bars(self, bars, bpm, vel=(64, 54), seed=0):
+    def bars(self, bars, bpm, vel=(64, 54), seed=0, pedal=None):
+        """pedal: sustain pedal changed every `pedal` quarter notes (None = no pedal).
+        A note held by the pedal keeps sounding until the next pedal change."""
         rng = random.Random(seed)
         q = 60 / bpm
         for bar in bars:
+            first = len(self.notes)
             length = 0.0
             for hand, text, base in (("R", bar[0], vel[0]), ("L", bar[1], vel[1])):
                 for voice in text.split(" | "):
@@ -90,6 +93,12 @@ class Score:
                             s = start + (i * ARPEGGIO if kind == "arp" else 0)
                             v = base + accent + rng.randint(-5, 5)
                             self._add(p, s, dur * q * 0.9, dur * q, hand, v)
+            if pedal:
+                bar_end = self.t + length * q
+                for n in self.notes[first:]:
+                    seg = int(round((n["start"] - self.t) / q, 2) // pedal)
+                    lift = min(self.t + (seg + 1) * pedal * q, bar_end)
+                    n["release"] = round(max(n["release"], lift), 4)
             self.t += length * q
 
     def _add(self, name, start, vis_dur, sound_dur, hand, vel):
