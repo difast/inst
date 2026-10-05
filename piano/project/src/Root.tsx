@@ -4,6 +4,7 @@ import primiPassi from '../public/primi-passi/notes.json';
 import sonatinaGShort from '../public/sonatina-g-short/notes.json';
 import requiemShort from '../public/requiem-short/notes.json';
 import moonlight3Short from '../public/moonlight3-short/notes.json';
+import interstellarShort from '../public/interstellar-short/notes.json';
 
 const FPS = 30;
 const SONGS: {id: string; dir: string; song: Song}[] = [
@@ -11,6 +12,7 @@ const SONGS: {id: string; dir: string; song: Song}[] = [
   {id: 'SonatinaGShort', dir: 'sonatina-g-short', song: sonatinaGShort as Song},
   {id: 'RequiemShort', dir: 'requiem-short', song: requiemShort as Song},
   {id: 'Moonlight3Short', dir: 'moonlight3-short', song: moonlight3Short as Song},
+  {id: 'InterstellarShort', dir: 'interstellar-short', song: interstellarShort as Song},
 ];
 
 export const Root: React.FC = () => (
