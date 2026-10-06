@@ -3,7 +3,9 @@
 Short pieces of the clips, slowed down a little for smoothness, are interrupted by
 black cards with one word at a time (md.mp4 style: wide bold caps, pale blue, hard
 cuts). The clip sound keeps playing under the cards, so the wind is heard already
-on the opening black screen. Writes baza/final/fall.mp4 and fall-nosound.mp4.
+on the opening black screen. The voice-over (VOICE) is cut into phrases that play
+only on the cards; each card lasts as long as its phrase and the words appear in
+sync with the speech. Writes baza/final/fall.mp4 and fall-nosound.mp4.
 """
 import os
 import subprocess
@@ -16,44 +18,57 @@ FONT = os.path.join(HERE, "fonts", "ArchivoExpanded-ExtraBold.ttf")
 WM_FONT = os.path.join(HERE, "fonts", "Cormorant.ttf")
 W, H, FPS = 720, 1280, 30
 SLOW = 1.25          # clip slowdown
-WORD = 0.30          # seconds per word on a card
+VOICE = os.path.join(REF, "dreamina-2026-10-06-9487.mp3")
+LEAD = 0.25          # card starts this long before its phrase
+AMBIENT_ON_CARDS = 0.35  # clip sound level under the voice
 TEXT_COLOR = "0xD6E8F8"
 CROP = "crop=684:1216:30:54"  # hides the "AI" badge in the top-left corner
 
-# ("card", [words], last_word_hold)  or  ("clip", name, start, end)
+# ("card", [(word, syllables)], (voice_start, voice_end), tail)  or  ("clip", name, start, end)
+# Word onsets are spread over the phrase by syllable count ("FALLS" is weighted
+# up to cover the pause before "NOT EVERYONE").
 TIMELINE = [
-    ("card", ["STARTING", "A BUSINESS", "IS", "JUMPING", "WITHOUT", "A PARACHUTE"], 0.45),
+    ("card", [("STARTING", 2), ("A BUSINESS", 3), ("IS", 1), ("JUMPING", 2),
+              ("WITHOUT", 2), ("A PARACHUTE", 4)], (0.00, 2.34), 0.20),
     ("clip", "1", 0.00, 2.20),   # back view, falling over the clouds
-    ("card", ["PROBLEMS", "HIT YOU", "OUT OF", "NOWHERE"], 0.35),
+    ("card", [("PROBLEMS", 2), ("HIT YOU", 2), ("OUT OF", 2), ("NOWHERE", 2)], (2.85, 4.26), 0.15),
     ("clip", "1", 3.05, 4.40),   # the seagull
-    ("card", ["STAY", "CALM", "AND BUILD", "THE PLANE"], 0.35),
-    ("clip", "1", 6.90, 9.10),  # eyes closed, the jet assembles around him
-    ("card", ["ON THE", "WAY", "DOWN"], 0.35),
+    ("card", [("STAY", 1), ("CALM", 1), ("AND BUILD", 2), ("THE PLANE", 2)], (4.75, 6.50), 0.15),
+    ("clip", "1", 6.90, 9.10),   # eyes closed, the jet assembles around him
+    ("card", [("ON THE", 2), ("WAY", 1), ("DOWN", 1)], (6.52, 7.44), 0.15),
     ("clip", "2", 0.40, 2.40),   # champagne
     ("clip", "2", 3.30, 5.05),   # camera to the window
-    ("card", ["EVERYONE", "FALLS", "NOT EVERYONE", "BUILDS", "THE PLANE"], 1.6),
+    ("card", [("EVERYONE", 3), ("FALLS", 4.3), ("NOT EVERYONE", 4), ("BUILDS", 1), ("THE PLANE", 2)],
+     (7.89, 10.56), 1.30),
 ]
 
 
-def card_len(words, hold):
-    return WORD * (len(words) - 1) + hold
+def card_len(voice, tail):
+    return LEAD + voice[1] - voice[0] + tail
+
+
+def word_times(words, voice, d):
+    total = sum(w for _, w in words)
+    starts, acc = [], 0.0
+    for _, w in words:
+        starts.append(LEAD + (voice[1] - voice[0]) * acc / total)
+        acc += w
+    return [(s, starts[i + 1] if i + 1 < len(starts) else d) for i, s in enumerate(starts)]
 
 
 def main():
     tmp = tempfile.mkdtemp()
-    inputs, f, vl, al = [], [], [], []
+    inputs, f, vl, al, vo = [], [], [], [], []
     t = 0.0
     for i, seg in enumerate(TIMELINE):
         if seg[0] == "card":
-            _, words, hold = seg
-            d = card_len(words, hold)
+            _, words, voice, tail = seg
+            d = card_len(voice, tail)
             chain = []
-            for wi, word in enumerate(words):
+            for wi, ((word, _), (a, b)) in enumerate(zip(words, word_times(words, voice, d))):
                 path = os.path.join(tmp, f"{i}_{wi}.txt")
                 with open(path, "w") as fh:
                     fh.write(word)
-                a = wi * WORD
-                b = a + (hold if wi == len(words) - 1 else WORD)
                 chain.append(
                     f"drawtext=fontfile='{FONT}':textfile='{path}':fontsize=44:"
                     f"fontcolor={TEXT_COLOR}:x=(w-text_w)/2:y=(h-text_h)/2:"
@@ -73,7 +88,17 @@ def main():
             n = len(inputs) // 2 - 1
             f.append(f"[{n}:a]atrim={a0:.3f}:{a0 + d / SLOW:.3f},asetpts=PTS-STARTPTS,"
                      f"atempo={1 / SLOW:.4f},aresample=48000,apad,atrim=0:{d:.3f},"
+                     f"volume={AMBIENT_ON_CARDS},"
                      f"afade=t=in:d=0.03,afade=t=out:st={d - 0.03:.3f}:d=0.03[a{i}]")
+            # the phrase itself, placed at its absolute time in the reel
+            inputs += ["-i", VOICE]
+            n = len(inputs) // 2 - 1
+            ms = round((t + LEAD) * 1000)
+            f.append(f"[{n}:a]atrim={voice[0]}:{voice[1]},asetpts=PTS-STARTPTS,aresample=48000,"
+                     f"aformat=channel_layouts=stereo,afade=t=in:d=0.02,"
+                     f"afade=t=out:st={voice[1] - voice[0] - 0.04:.3f}:d=0.04,"
+                     f"adelay={ms}|{ms}[vo{i}]")
+            vo.append(f"[vo{i}]")
         else:
             _, src, a, b = seg
             d = (b - a) * SLOW
@@ -93,7 +118,9 @@ def main():
     f.append(f"[cv]noise=c0s=4:c0f=t+u,"
              f"drawtext=fontfile='{WM_FONT}':text='P':fontsize=52:fontcolor=white@0.65:"
              f"x=w-text_w-40:y=h-text_h-60:shadowcolor=black@0.35:shadowx=0:shadowy=1[vout]")
-    f.append(f"[ca]loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.3,"
+    f.append(f"[ca]aformat=channel_layouts=stereo[amb]")
+    f.append("[amb]" + "".join(vo) + f"amix=inputs={len(vo) + 1}:normalize=0:duration=first[mix]")
+    f.append(f"[mix]loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.3,"
              f"afade=t=out:st={total - 1.0:.2f}:d=1.0[aout]")
 
     os.makedirs(OUT, exist_ok=True)
