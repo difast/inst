@@ -24,7 +24,12 @@ const Logo: React.FC<{size: number}> = ({size}) => (
   </svg>
 );
 
-export const Banner: React.FC<{top: number; name: string; site: string}> = ({top, name, site}) => {
+export const Banner: React.FC<{top: number; name: string; site: string; tagline?: string}> = ({
+  top,
+  name,
+  site,
+  tagline,
+}) => {
   const frame = useCurrentFrame();
   const {fps, width} = useVideoConfig();
 
@@ -72,7 +77,7 @@ export const Banner: React.FC<{top: number; name: string; site: string}> = ({top
         </div>
         <div style={{flex: 1, color: '#fff', lineHeight: 1.05}}>
           <div style={{fontSize: 44, fontWeight: 700}}>{name}</div>
-          <div style={{fontSize: 30, opacity: 0.9, marginTop: 6}}>Учись играть на {site}</div>
+          <div style={{fontSize: 30, opacity: 0.9, marginTop: 6}}>{tagline ?? `Учись играть на ${site}`}</div>
         </div>
         <div
           style={{

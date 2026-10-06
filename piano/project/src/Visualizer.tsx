@@ -23,7 +23,11 @@ const COLORS: Record<string, [string, string]> = {
   L: ['#6f8dff', '#3048ff'],
 };
 
-export const Visualizer: React.FC<{song: Song; audio: string}> = ({song, audio}) => {
+// Optional call-to-action overlays: a hook line at the start, a subscribe card at the end,
+// and a banner that points to the link in the profile.
+export type Promo = {hook?: string; outro?: [string, string]; bannerName?: string; bannerTagline?: string};
+
+export const Visualizer: React.FC<{song: Song; audio: string; promo?: Promo}> = ({song, audio, promo}) => {
   const {notes, composer, title, sections, keyboard} = song;
   const frame = useCurrentFrame();
   const {fps, width, durationInFrames} = useVideoConfig();
@@ -178,7 +182,59 @@ export const Visualizer: React.FC<{song: Song; audio: string}> = ({song, audio})
           );
         })}
 
-      <Banner top={KB_TOP + WHITE_H + 36} name="Piano Lab" site="piano-lab.ru" />
+      <Banner
+        top={KB_TOP + WHITE_H + 36}
+        name={promo?.bannerName ?? 'Piano Lab'}
+        site="piano-lab.ru"
+        tagline={promo?.bannerTagline}
+      />
+
+      {promo?.hook ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 620,
+            width,
+            textAlign: 'center',
+            padding: '0 70px',
+            boxSizing: 'border-box',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 700,
+            fontSize: 68,
+            lineHeight: 1.15,
+            color: '#fff',
+            textShadow: '0 4px 24px rgba(0,0,0,0.9), 0 0 40px rgba(60,140,255,0.5)',
+            opacity: interpolate(frame, [6, 16, 2.6 * fps, 3.1 * fps], [0, 1, 1, 0], {
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+            }),
+            transform: `scale(${interpolate(frame, [6, 20], [0.92, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})})`,
+          }}
+        >
+          {promo.hook}
+        </div>
+      ) : null}
+
+      {promo?.outro ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 560,
+            width,
+            textAlign: 'center',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            color: '#fff',
+            textShadow: '0 4px 24px rgba(0,0,0,0.95)',
+            opacity: interpolate(frame, [durationInFrames - 3.4 * fps, durationInFrames - 2.9 * fps], [0, 1], {
+              extrapolateLeft: 'clamp',
+              extrapolateRight: 'clamp',
+            }),
+          }}
+        >
+          <div style={{fontSize: 84, fontWeight: 700}}>{promo.outro[0]}</div>
+          <div style={{fontSize: 40, marginTop: 14, color: '#cfe4ff'}}>{promo.outro[1]}</div>
+        </div>
+      ) : null}
 
       {/* title */}
       <div
