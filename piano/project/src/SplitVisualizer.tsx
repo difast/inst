@@ -61,7 +61,6 @@ export const SplitVisualizer: React.FC<{song: LiveSong; dir: string; promo?: Liv
   const frame = useCurrentFrame();
   const {fps, width, height, durationInFrames} = useVideoConfig();
   const t = frame / fps;
-  const active = notes.filter((n) => t >= n.start && t < n.start + n.dur);
   const kbBottom = KB_TOP + geometry.height;
   const clamp = {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'} as const;
   const hookOpacity = interpolate(t, [0.2, 0.6, 2.6, 3.0], [0, 1, 1, 0], clamp);
@@ -160,25 +159,6 @@ export const SplitVisualizer: React.FC<{song: LiveSong; dir: string; promo?: Liv
         muted
         style={{position: 'absolute', top: KB_TOP, left: 0, width, height: geometry.height}}
       />
-      {active.map((n, i) => {
-        const k = keyRect(n.midi, geometry);
-        return (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              left: k.x + 2,
-              width: k.w - 4,
-              top: KB_TOP,
-              height: k.black ? geometry.height * 0.6 : geometry.height,
-              background: `linear-gradient(${NOTE[0]}, rgba(224,138,46,0.12))`,
-              mixBlendMode: 'screen',
-              opacity: 0.75,
-              boxShadow: `0 0 30px ${GLOW}`,
-            }}
-          />
-        );
-      })}
       <div
         style={{
           position: 'absolute',
