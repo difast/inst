@@ -5,6 +5,8 @@ import sonatinaGShort from '../public/sonatina-g-short/notes.json';
 import requiemShort from '../public/requiem-short/notes.json';
 import moonlight3Short from '../public/moonlight3-short/notes.json';
 import interstellarShort from '../public/interstellar-short/notes.json';
+import rondoLive from '../public/rondo-live/notes.json';
+import {LiveSong, SplitVisualizer} from './SplitVisualizer';
 
 const FPS = 30;
 const PROMO_BANNER = {bannerName: 'Научись играть это', bannerTagline: 'Piano Lab · ссылка в профиле'};
@@ -47,5 +49,14 @@ export const Root: React.FC = () => (
         defaultProps={{song, audio: `${dir}/audio.wav`, promo}}
       />
     ))}
+    <Composition
+      id="RondoLive"
+      component={SplitVisualizer}
+      durationInFrames={Math.ceil(rondoLive.duration * FPS)}
+      fps={FPS}
+      width={1080}
+      height={1920}
+      defaultProps={{song: rondoLive as LiveSong, dir: 'rondo-live'}}
+    />
   </>
 );
