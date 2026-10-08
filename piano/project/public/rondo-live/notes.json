@@ -1,7 +1,7 @@
 {
  "composer": "W. A. Mozart",
  "title": "Rondo alla Turca",
- "duration": 18.6,
+ "duration": 20.0,
  "keyboard": [
   53,
   96
@@ -12,336 +12,383 @@
    "midi": 71,
    "start": 2.3,
    "dur": 0.19,
+   "release": 2.49,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 69,
    "start": 2.52,
    "dur": 0.2,
+   "release": 2.72,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 68,
    "start": 2.75,
    "dur": 0.17,
+   "release": 2.92,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 69,
    "start": 2.95,
    "dur": 0.19,
+   "release": 3.14,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 72,
    "start": 3.17,
    "dur": 0.45,
+   "release": 3.62,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 74,
    "start": 3.97,
    "dur": 0.21,
+   "release": 4.18,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 72,
    "start": 4.21,
    "dur": 0.18,
+   "release": 4.39,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 71,
    "start": 4.42,
    "dur": 0.21,
+   "release": 4.63,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 72,
    "start": 4.66,
    "dur": 0.21,
+   "release": 4.87,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 4.9,
    "dur": 0.45,
+   "release": 5.35,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 77,
    "start": 5.89,
    "dur": 0.21,
+   "release": 6.1,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 6.13,
    "dur": 0.21,
+   "release": 6.34,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 75,
    "start": 6.37,
    "dur": 0.21,
+   "release": 6.58,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 6.61,
    "dur": 0.28,
+   "release": 6.89,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 83,
    "start": 6.92,
    "dur": 0.24,
+   "release": 7.16,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 81,
    "start": 7.19,
    "dur": 0.25,
+   "release": 7.44,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 80,
    "start": 7.47,
    "dur": 0.19,
+   "release": 7.66,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 7.69,
    "dur": 0.2,
+   "release": 7.89,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 83,
    "start": 7.92,
    "dur": 0.2,
+   "release": 8.12,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 8.15,
    "dur": 0.21,
+   "release": 8.36,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 80,
    "start": 8.39,
    "dur": 0.19,
+   "release": 8.58,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 8.61,
    "dur": 0.22,
+   "release": 8.83,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 84,
    "start": 8.86,
    "dur": 0.84,
+   "release": 9.7,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 81,
    "start": 9.73,
    "dur": 0.36,
+   "release": 10.09,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 84,
    "start": 10.12,
    "dur": 0.47,
+   "release": 10.59,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 83,
    "start": 10.62,
    "dur": 0.44,
+   "release": 11.06,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 78,
    "start": 11.09,
    "dur": 0.43,
+   "release": 11.52,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 11.09,
    "dur": 0.43,
+   "release": 11.52,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 11.55,
    "dur": 0.39,
+   "release": 11.94,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 79,
    "start": 11.55,
    "dur": 0.39,
+   "release": 11.94,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 78,
    "start": 11.97,
    "dur": 0.46,
+   "release": 12.43,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 11.97,
    "dur": 0.46,
+   "release": 12.43,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 83,
    "start": 12.46,
    "dur": 0.41,
+   "release": 12.87,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 78,
    "start": 12.9,
    "dur": 0.44,
+   "release": 13.34,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 12.9,
    "dur": 0.44,
+   "release": 13.34,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 13.37,
    "dur": 0.42,
+   "release": 13.79,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 79,
    "start": 13.37,
    "dur": 0.42,
+   "release": 13.79,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 78,
    "start": 13.82,
    "dur": 0.38,
+   "release": 14.2,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 13.82,
    "dur": 0.38,
+   "release": 14.2,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 83,
    "start": 14.23,
    "dur": 0.36,
+   "release": 14.59,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   },
   {
    "midi": 78,
    "start": 14.62,
    "dur": 0.44,
+   "release": 15.06,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 81,
    "start": 14.62,
    "dur": 0.44,
+   "release": 15.06,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 15.09,
    "dur": 0.45,
+   "release": 15.54,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 79,
    "start": 15.09,
    "dur": 0.45,
+   "release": 15.54,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 75,
    "start": 15.57,
    "dur": 0.48,
+   "release": 16.05,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 78,
    "start": 15.57,
    "dur": 0.48,
+   "release": 16.05,
    "hand": "R",
-   "vel": 0.8
+   "vel": 70
   },
   {
    "midi": 76,
    "start": 16.08,
    "dur": 1.5,
+   "release": 17.58,
    "hand": "R",
-   "vel": 0.8
+   "vel": 84
   }
  ],
  "geometry": {
-  "x0": 35.61206896551724,
-  "ww": 43.199999999999996,
+  "x0": -251.8860759493671,
+  "ww": 63.43291139240506,
   "firstWhite": 55,
-  "height": 302
+  "height": 444
  }
 }

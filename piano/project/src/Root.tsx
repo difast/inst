@@ -6,11 +6,16 @@ import requiemShort from '../public/requiem-short/notes.json';
 import moonlight3Short from '../public/moonlight3-short/notes.json';
 import interstellarShort from '../public/interstellar-short/notes.json';
 import rondoLive from '../public/rondo-live/notes.json';
-import {LiveSong, SplitVisualizer} from './SplitVisualizer';
+import {LivePromo, LiveSong, SplitVisualizer} from './SplitVisualizer';
 
 const FPS = 30;
 const PROMO_BANNER = {bannerName: 'Научись играть это', bannerTagline: 'Piano Lab · ссылка в профиле'};
 const OUTRO: [string, string] = ['Подпишись', 'чтобы не пропустить следующую мелодию'];
+
+const RONDO_PROMO: LivePromo = {
+  hook: 'Моцарт,\nкоторого знает каждый',
+  outro: ['Научись играть это', 'Piano Lab · ссылка в профиле'],
+};
 
 const SONGS: {id: string; dir: string; song: Song; promo?: Promo}[] = [
   {id: 'PrimiPassi', dir: 'primi-passi', song: primiPassi as Song},
@@ -56,7 +61,7 @@ export const Root: React.FC = () => (
       fps={FPS}
       width={1080}
       height={1920}
-      defaultProps={{song: rondoLive as LiveSong, dir: 'rondo-live'}}
+      defaultProps={{song: rondoLive as LiveSong, dir: 'rondo-live', promo: RONDO_PROMO}}
     />
   </>
 );
