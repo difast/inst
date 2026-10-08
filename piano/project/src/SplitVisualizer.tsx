@@ -179,7 +179,7 @@ export const SplitVisualizer: React.FC<{song: LiveSong; dir: string; promo?: Liv
           width,
           height: geometry.height,
           background:
-            'linear-gradient(90deg, rgba(8,5,4,0.75), rgba(8,5,4,0) 12%, rgba(8,5,4,0) 88%, rgba(8,5,4,0.75)), linear-gradient(rgba(0,0,0,0) 80%, rgba(8,5,4,0.6))',
+            'linear-gradient(90deg, rgba(8,5,4,0.45), rgba(8,5,4,0) 10%, rgba(8,5,4,0) 90%, rgba(8,5,4,0.45)), linear-gradient(rgba(0,0,0,0) 85%, rgba(8,5,4,0.35))',
         }}
       />
       <div

@@ -89,7 +89,7 @@ def main():
         "ffmpeg", "-v", "error", "-y", "-i", VIDEO, "-t", str(DURATION),
         "-vf", f"crop={CROP_W}:{KB_H}:{CROP_X}:{KB_Y},hqdn3d=2:2:4:4,"
                "normalize=blackpt=black:whitept=white:smoothing=60:strength=0.8,"
-               "eq=saturation=0.75:gamma=0.95,curves=all='0/0 0.75/0.8 1/0.9',"
+               "eq=saturation=0.75:gamma=1.15,curves=all='0/0 0.45/0.62 0.85/0.97 1/1',"
                f"scale={W}:{KB_PX}:flags=lanczos,unsharp=7:7:0.9,fps=30",
         "-an", "-c:v", "libx264", "-crf", "16", "-pix_fmt", "yuv420p",
         os.path.join(OUT, "keys.mp4")], check=True)
