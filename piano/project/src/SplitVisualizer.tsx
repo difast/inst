@@ -178,8 +178,10 @@ export const SplitVisualizer: React.FC<{song: LiveSong; dir: string; promo?: Liv
           top: KB_TOP,
           width,
           height: geometry.height,
-          background:
-            'linear-gradient(90deg, rgba(8,5,4,0.45), rgba(8,5,4,0) 10%, rgba(8,5,4,0) 90%, rgba(8,5,4,0.45)), linear-gradient(rgba(0,0,0,0) 85%, rgba(8,5,4,0.35))',
+          background: 'linear-gradient(90deg, rgba(8,5,4,0.75), rgba(8,5,4,0) 12%, rgba(8,5,4,0) 88%, rgba(8,5,4,0.75))',
+          // side shading only: it fades out towards the bottom, the lower corners stay clean
+          maskImage: 'linear-gradient(#000 40%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(#000 40%, transparent 100%)',
         }}
       />
       <div
