@@ -6,18 +6,25 @@ fixed mask (the camera stands still); the hands are found in every frame by skin
 colour, smoothed in time and feathered. The lacquered panel next to the keys (it
 mirrors the hands and the room) is outside the mask, so its reflections are gone.
 A slow push-in, warm grade and film grain finish the look. The live sound is kept,
-only cleaned. Writes piano/final/hands-dark.mp4.
+only cleaned. vinyl_title.py then adds the spinning record, the hook and the CTA.
+Writes piano/final/hands-dark.mp4 (47 s) and hands-dark-short.mp4 (25.6 s, ends on
+the G minor cadence).
 """
 import os
 import subprocess
+import tempfile
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 from scipy import ndimage
 
+import vinyl_title
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "..", "..", "reference", "видео с руками второй.mp4")
-OUT = os.path.join(HERE, "..", "..", "final", "hands-dark.mp4")
+FINAL = os.path.join(HERE, "..", "..", "final")
+OUT = os.path.join(tempfile.gettempdir(), "hands-dark-base.mp4")  # before titles
+SHORT_END = 25.6
 SW, SH = 464, 848
 W, H, FPS = 1080, 1920, 30
 START, END = 5.92, 53.4  # from the loud entry to the end of the last chord
@@ -69,7 +76,7 @@ def main():
     dec = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-ss", str(START), "-i", SRC, "-t", str(dur), "-r", str(FPS),
          "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
-    audio = os.path.join(HERE, "..", "..", "final", "_hands_audio.wav")
+    audio = os.path.join(tempfile.gettempdir(), "hands-dark-audio.wav")
     subprocess.run([
         "ffmpeg", "-v", "error", "-y", "-ss", str(START), "-i", SRC, "-t", str(dur), "-vn",
         "-af", "highpass=f=60,afftdn=nr=12:nf=-50,equalizer=f=220:t=q:w=1.2:g=-2,"
@@ -126,7 +133,9 @@ def main():
     dec.stdout.close()
     dec.wait()
     os.remove(audio)
-    print(f"hands-dark.mp4: {dur:.1f}s")
+    vinyl_title.main(OUT, os.path.join(FINAL, "hands-dark.mp4"))
+    vinyl_title.main(OUT, os.path.join(FINAL, "hands-dark-short.mp4"), SHORT_END)
+    print(f"hands-dark.mp4: {dur:.1f}s, hands-dark-short.mp4: {SHORT_END}s")
 
 
 if __name__ == "__main__":

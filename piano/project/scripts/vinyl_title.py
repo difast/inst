@@ -1,13 +1,15 @@
-"""Spinning vinyl record with the title on its label, laid over the dark top of a reel.
+"""Spinning vinyl record with the title on its label, plus hook and CTA, over a dark reel.
 
 The record (grooves, sheen texture, a printed ring on the label) turns at 33 1/3 rpm;
 the light highlight and the title stay still, so the name is always readable.
+The hook line takes the record's place for the first seconds, then the record fades
+in; at the end the record gives way to the call to action.
 
-    python3 vinyl_title.py <in.mp4> <out.mp4> "The Black Star"
+    python3 vinyl_title.py <in.mp4> <out.mp4> [--end SECONDS]
 """
+import argparse
 import os
 import subprocess
-import sys
 import tempfile
 
 import numpy as np
@@ -19,6 +21,11 @@ D = 460  # disc diameter on the 1080x1920 frame
 CX, CY = 540, 360  # disc centre, clear of the hands below
 LABEL = 0.5  # label diameter / disc diameter
 RPM = 100 / 3
+TITLE = "The Black Star"
+HOOK = "Сыграй это тому,\nпо кому скучаешь"
+CTA = ("Хочешь сыграть это для кого-то?", "Научись в Piano Lab · ссылка в профиле")
+HOOK_END = 3.2  # the record appears after the hook
+CTA_LEN = 4.0  # last seconds
 
 
 def font(size, weight):
@@ -88,35 +95,79 @@ def still(title):
     return im
 
 
-def main(src, out, title):
+def text_card(lines, path):
+    """Centered lines (text, size, weight, colour) with a warm glow, on a transparent 1080x560 card."""
+    w, h = 1080, 560
+    layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    rows = []
+    for text, size, weight, colour in lines:
+        f = font(size, weight)
+        box = d.textbbox((0, 0), text, font=f)
+        rows.append((text, f, colour, box))
+    gap = 18
+    total = sum(b[3] - b[1] for *_, b in rows) + gap * (len(rows) - 1)
+    y = (h - total) / 2
+    for text, f, colour, box in rows:
+        d.text(((w - (box[2] - box[0])) / 2 - box[0], y - box[1]), text, font=f, fill=colour)
+        y += box[3] - box[1] + gap
+    alpha = layer.split()[3]
+    glow = Image.new("RGBA", (w, h), (255, 150, 60, 0))
+    glow.putalpha(alpha.filter(ImageFilter.GaussianBlur(14)).point(lambda v: int(v * 0.55)))
+    shadow = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    shadow.putalpha(alpha.filter(ImageFilter.GaussianBlur(6)).point(lambda v: int(v * 0.9)))
+    Image.alpha_composite(Image.alpha_composite(shadow, glow), layer).save(path)
+
+
+def main(src, out, end=None):
     tmp = tempfile.mkdtemp()
-    disc_png, still_png, glow_png = (os.path.join(tmp, n) for n in ("disc.png", "still.png", "glow.png"))
+    disc_png, still_png, glow_png, hook_png, cta_png = (
+        os.path.join(tmp, n) for n in ("disc.png", "still.png", "glow.png", "hook.png", "cta.png"))
     disc().save(disc_png)
-    still(title).save(still_png)
+    still(TITLE).save(still_png)
     # warm glow behind the record so it separates from the black
     g = Image.new("RGBA", (D + 300, D + 300), (0, 0, 0, 0))
     ImageDraw.Draw(g).ellipse([150, 150, D + 150, D + 150], fill=(255, 150, 70, 60))
     g.filter(ImageFilter.GaussianBlur(70)).save(glow_png)
+    cream = (255, 240, 220, 255)
+    text_card([(line, 76, 600, cream) for line in HOOK.split("\n")], hook_png)
+    text_card([(CTA[0], 62, 600, cream), (CTA[1], 40, 500, (243, 211, 166, 255))], cta_png)
 
+    dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", src],
+                               capture_output=True, text=True, check=True).stdout)
+    if end:
+        dur = end
+    cta = dur - CTA_LEN
     w = 2 * np.pi * RPM / 60
     x0, y0 = CX - D // 2, CY - D // 2
+    rec = f"fade=t=in:st={HOOK_END}:d=0.8:alpha=1,fade=t=out:st={cta - 0.6:.2f}:d=0.6:alpha=1"
     fc = (
-        f"[1:v]format=rgba,fade=t=in:d=0.8:alpha=1[glow];"
-        f"[2:v]format=rgba,rotate=a='{w:.4f}*t':c=none:ow={D}:oh={D},fade=t=in:d=0.8:alpha=1[disc];"
-        f"[3:v]format=rgba,fade=t=in:d=0.8:alpha=1[still];"
+        f"[1:v]format=rgba,{rec}[glow];"
+        f"[2:v]format=rgba,rotate=a='{w:.4f}*t':c=none:ow={D}:oh={D},{rec}[disc];"
+        f"[3:v]format=rgba,{rec}[still];"
+        f"[4:v]format=rgba,fade=t=in:st=0.15:d=0.5:alpha=1,fade=t=out:st={HOOK_END - 0.5}:d=0.5:alpha=1[hook];"
+        f"[5:v]format=rgba,fade=t=in:st={cta:.2f}:d=0.6:alpha=1[cta];"
         f"[0:v][glow]overlay={x0 - 150}:{y0 - 150}:shortest=1[a];"
         f"[a][disc]overlay={x0}:{y0}:shortest=1[b];"
-        f"[b][still]overlay={x0}:{y0}:shortest=1[v]"
+        f"[b][still]overlay={x0}:{y0}:shortest=1[c];"
+        f"[c][hook]overlay=0:{CY - 280}:shortest=1[d];"
+        f"[d][cta]overlay=0:{CY - 280}:shortest=1,"
+        f"fade=t=out:st={dur - 0.8:.2f}:d=0.8[v]"
     )
     subprocess.run([
         "ffmpeg", "-v", "error", "-y", "-i", src,
-        "-loop", "1", "-framerate", "30", "-i", glow_png,
-        "-loop", "1", "-framerate", "30", "-i", disc_png,
-        "-loop", "1", "-framerate", "30", "-i", still_png,
-        "-filter_complex", fc, "-map", "[v]", "-map", "0:a",
+        *[a for p in (glow_png, disc_png, still_png, hook_png, cta_png)
+          for a in ("-loop", "1", "-framerate", "30", "-i", p)],
+        "-filter_complex", fc, "-map", "[v]", "-map", "0:a", "-t", f"{dur:.2f}",
+        "-af", f"afade=t=out:st={dur - 1.6:.2f}:d=1.6",
         "-c:v", "libx264", "-crf", "20", "-preset", "slow", "-pix_fmt", "yuv420p",
-        "-c:a", "copy", "-movflags", "+faststart", out], check=True)
+        "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", out], check=True)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "The Black Star")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("src")
+    ap.add_argument("out")
+    ap.add_argument("--end", type=float, help="cut the reel at this second (short version)")
+    a = ap.parse_args()
+    main(a.src, a.out, a.end)
