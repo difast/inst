@@ -21,8 +21,8 @@ OUT = os.path.join(HERE, "..", "..", "final", "hands-dark.mp4")
 SW, SH = 464, 848
 W, H, FPS = 1080, 1920, 30
 START, END = 5.92, 53.4  # from the loud entry to the end of the last chord
-ZOOM = 0.13  # push-in over the whole clip
-FOCUS = (200, 600)  # point the camera moves towards (source pixels)
+ZOOM = (1.18, 1.32)  # framed tighter than the source, slow push-in over the clip
+FOCUS = (215, 600)  # the hands (source pixels); the crop is centred here when it fits
 
 # keys only: far end of the keyboard, along the felt strip, down to the frame edge
 KEYS = [(210, 510), (278, 510), (300, 543), (325, 573), (350, 598), (390, 633), (425, 678),
@@ -80,9 +80,9 @@ def main():
     enc = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
          "-r", str(FPS), "-i", "-", "-i", audio,
-         "-vf", "noise=c0s=6:c0f=t+u,fade=t=in:d=0.25,"
+         "-vf", "noise=c0s=4:c0f=t+u,fade=t=in:d=0.25,"
                 f"fade=t=out:st={dur - 1.4:.2f}:d=1.4",
-         "-c:v", "libx264", "-crf", "17", "-preset", "slow", "-pix_fmt", "yuv420p",
+         "-c:v", "libx264", "-crf", "22", "-preset", "slow", "-pix_fmt", "yuv420p",
          "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", OUT],
         stdin=subprocess.PIPE)
 
@@ -111,12 +111,10 @@ def main():
         comp = lit * m + backdrop(t, fields) * (1 - m)
 
         # slow push-in towards the hands
-        z = 1 + ZOOM * (t / dur)
+        z = ZOOM[0] + (ZOOM[1] - ZOOM[0]) * (t / dur)
         cw, ch = SW / z, SH / z
-        cx = SW / 2 + (FOCUS[0] - SW / 2) * (1 - 1 / z) * 1.6
-        cy = SH / 2 + (FOCUS[1] - SH / 2) * (1 - 1 / z) * 1.6
-        x0 = min(max(cx - cw / 2, 0), SW - cw)
-        y0 = min(max(cy - ch / 2, 0), SH - ch)
+        x0 = min(max(FOCUS[0] - cw / 2, 0), SW - cw)
+        y0 = min(max(FOCUS[1] - ch / 2, 0), SH - ch)
         img = Image.fromarray(comp.astype(np.uint8)).transform(
             (W, H), Image.EXTENT, (x0, y0, x0 + cw, y0 + ch), Image.BICUBIC)
         enc.stdin.write(img.tobytes())
