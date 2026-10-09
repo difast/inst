@@ -103,7 +103,10 @@ def main():
             skin = np.isin(lab, 1 + np.flatnonzero(sizes > 400))
         hand = ndimage.gaussian_filter(ndimage.binary_dilation(skin, iterations=3).astype(np.float32), 4.5)
         prev = hand if prev is None else np.maximum(hand, prev * 0.55)  # no flicker at the edges
-        m = np.clip(np.maximum(keys, prev), 0, 1)[..., None]
+        # the yellow box behind the hands must not ride along the hand edges
+        yellow = ndimage.binary_dilation((g - b > 55) & (r > 110) & (keys < 0.5), iterations=2)
+        hand_m = prev * (1 - ndimage.gaussian_filter(yellow.astype(np.float32), 1.5))
+        m = np.clip(np.maximum(keys, hand_m), 0, 1)[..., None]
 
         t = i / FPS
         # warm, slightly crushed grade on the kept picture
