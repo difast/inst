@@ -7,8 +7,8 @@ colour, smoothed in time and feathered. The lacquered panel next to the keys (it
 mirrors the hands and the room) is outside the mask, so its reflections are gone.
 A slow push-in, warm grade and film grain finish the look. The live sound is kept,
 only cleaned. vinyl_title.py then adds the spinning record, the hook and the CTA.
-Writes piano/final/hands-dark.mp4 (47 s) and hands-dark-short.mp4 (25.6 s, ends on
-the G minor cadence).
+Writes piano/final/hands-dark-short.mp4 (25.6 s, ends on the G minor cadence);
+it is the template for this format (reference/ОБРАЗЕЦ-hands-dark.mp4).
 """
 import os
 import subprocess
@@ -133,9 +133,8 @@ def main():
     dec.stdout.close()
     dec.wait()
     os.remove(audio)
-    vinyl_title.main(OUT, os.path.join(FINAL, "hands-dark.mp4"))
     vinyl_title.main(OUT, os.path.join(FINAL, "hands-dark-short.mp4"), SHORT_END)
-    print(f"hands-dark.mp4: {dur:.1f}s, hands-dark-short.mp4: {SHORT_END}s")
+    print(f"hands-dark-short.mp4: {SHORT_END}s")
 
 
 if __name__ == "__main__":
